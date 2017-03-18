@@ -17,7 +17,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             public float RunMultiplier = 2.0f;   // Speed when sprinting
             public float SquatMultiplier = 0.3f;   // Speed when squatting
 	        public KeyCode RunKey = KeyCode.LeftShift;
-
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
             [HideInInspector] public float CurrentTargetSpeed = 8f;
@@ -51,7 +50,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					//handled last as if strafing and moving forward at the same time forwards speed should take precedence
 					CurrentTargetSpeed = ForwardSpeed;
 				}
-
 #if !MOBILE_INPUT
 	            if (Input.GetKey(RunKey))
 	            {
@@ -170,7 +168,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 m_IsSquatting = false;
             }
-
         }
 
 
