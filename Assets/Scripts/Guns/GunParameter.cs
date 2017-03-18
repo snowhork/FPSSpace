@@ -35,9 +35,27 @@ namespace Guns
             set { _coolTime = value; }
         }
 
+        public bool IsAbleToReload
+        {
+            get { return BalletsNum < BalletsMaxNum && BalletsBoxNum > 0; }
+        }
+
         public GunParameter()
         {
             _balletsNum = _balletsMaxNum;
+        }
+
+        public int EmptyBalletsNum
+        {
+            get { return _balletsMaxNum - _balletsNum; }
+        }
+
+        public int ReloadBalletsNum
+        {
+            get
+            {
+                return BalletsBoxNum >= EmptyBalletsNum ? EmptyBalletsNum : BalletsBoxNum;
+            }
         }
 
     }
