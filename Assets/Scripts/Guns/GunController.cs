@@ -11,6 +11,7 @@ namespace Guns
         [SerializeField] private GunParameter _parameter;
         [SerializeField] private Transform _gunTop;
         [SerializeField] private AudioClip _shotClip;
+        [SerializeField] private AudioClip _reloadClip;
         [SerializeField] private GameObject _fireParticle;
         private float _coolTime;
         private AudioSource _audioSource;
@@ -33,6 +34,14 @@ namespace Guns
             GetComponent<AudioSource>().PlayOneShot(_shotClip);
             InstantiateFire(_gunTop.position, transform);
             GetComponent<RayCasterByGun>().RayCast(InstantiateFire);
+        }
+
+        public void Reload()
+        {
+            if(!_parameter.IsAbleToReload) return;
+            GetComponent<AudioSource>().PlayOneShot(_reloadClip);
+            _parameter.BalletsNum += _parameter.ReloadBalletsNum;
+            _parameter.BalletsBoxNum -= _parameter.ReloadBalletsNum;
         }
 
         private void InstantiateFire(Vector3 position, Transform parent)
