@@ -15,6 +15,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             public float BackwardSpeed = 4.0f;  // Speed when walking backwards
             public float StrafeSpeed = 4.0f;    // Speed when walking sideways
             public float RunMultiplier = 2.0f;   // Speed when sprinting
+            public float SquatMultiplier = 0.3f;   // Speed when squatting
 	        public KeyCode RunKey = KeyCode.LeftShift;
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
@@ -23,6 +24,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #if !MOBILE_INPUT
             private bool m_Running;
 #endif
+
+            private RigidbodyFirstPersonController _firstPersonController;
+            public MovementSettings(RigidbodyFirstPersonController firstPersonController)
+            {
+                _firstPersonController = firstPersonController;
+            }
 
             public void UpdateDesiredTargetSpeed(Vector2 input)
             {
@@ -54,6 +61,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		            m_Running = false;
 	            }
 #endif
+                if (_firstPersonController.Squatting)
+                {
+                    CurrentTargetSpeed *= SquatMultiplier;
+                    m_Running = true;
+                }
+                else
+                {
+                    m_Running = false;
+                }
             }
 
 #if !MOBILE_INPUT
@@ -78,7 +94,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         public Camera cam;
-        public MovementSettings movementSettings = new MovementSettings();
+        public MovementSettings movementSettings;
         public MouseLook mouseLook = new MouseLook();
         public AdvancedSettings advancedSettings = new AdvancedSettings();
 
@@ -87,7 +103,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private CapsuleCollider m_Capsule;
         private float m_YRotation;
         private Vector3 m_GroundContactNormal;
-        private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
+        private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded, m_IsSquatting;
+        public KeyCode SquatKey = KeyCode.C;
 
 
         public Vector3 Velocity
@@ -117,6 +134,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
+        public bool Squatting
+        {
+            get { return m_IsSquatting; }
+        }
+
+        private void Awake()
+        {
+            movementSettings = new MovementSettings(this);
+        }
 
         private void Start()
         {
@@ -125,7 +151,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             mouseLook.Init (transform, cam.transform);
         }
 
-
         private void Update()
         {
             RotateView();
@@ -133,6 +158,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
             {
                 m_Jump = true;
+            }
+
+            if (Input.GetKey(SquatKey))
+            {
+                m_IsSquatting = true;
+            }
+            else
+            {
+                m_IsSquatting = false;
             }
         }
 
