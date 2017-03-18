@@ -18,7 +18,7 @@ namespace Guns
 
         private bool IsAbleToShot
         {
-            get { return _coolTime < 0 && _parameter.BalletsNum >= 0; }
+            get { return _coolTime < 0 && _parameter.BalletsNum > 0; }
         }
 
         private void Update()
@@ -40,8 +40,9 @@ namespace Guns
         {
             if(!_parameter.IsAbleToReload) return;
             GetComponent<AudioSource>().PlayOneShot(_reloadClip);
-            _parameter.BalletsNum += _parameter.ReloadBalletsNum;
-            _parameter.BalletsBoxNum -= _parameter.ReloadBalletsNum;
+            var reloadBalletsNum = _parameter.ReloadBalletsNum;
+            _parameter.BalletsNum += reloadBalletsNum;
+            _parameter.BalletsBoxNum -= reloadBalletsNum;
         }
 
         private void InstantiateFire(Vector3 position, Transform parent)

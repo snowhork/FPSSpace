@@ -54,7 +54,7 @@ namespace Guns
         {
             get
             {
-                return EmptyBalletsNum >= BalletsBoxNum ? EmptyBalletsNum : BalletsBoxNum;
+                return BalletsBoxNum >= EmptyBalletsNum ? EmptyBalletsNum : BalletsBoxNum;
             }
         }
 
