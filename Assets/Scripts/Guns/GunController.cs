@@ -5,6 +5,7 @@ using UnityEngine.Audio;
 namespace Guns
 {
     [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(RayCasterByGun))]
     public class GunController : MonoBehaviour
     {
         [SerializeField] private GunParameter _parameter;
@@ -19,11 +20,6 @@ namespace Guns
             get { return _coolTime < 0 && _parameter.BalletsNum >= 0; }
         }
 
-        private void Start()
-        {
-            _audioSource = GetComponent<AudioSource>();
-        }
-
         private void Update()
         {
             _coolTime -= Time.deltaTime;
@@ -34,29 +30,18 @@ namespace Guns
             if(!IsAbleToShot) return;
             _coolTime = _parameter.CoolTime;
             _parameter.BalletsNum--;
-            _audioSource.PlayOneShot(_shotClip);
-            var particle = InstantiateFire(_gunTop.position);
-            particle.transform.parent = transform;
-            RayCast();
+            GetComponent<AudioSource>().PlayOneShot(_shotClip);
+            InstantiateFire(_gunTop.position, transform);
+            GetComponent<RayCasterByGun>().RayCast(InstantiateFire);
         }
 
-        private void RayCast()
+        private void InstantiateFire(Vector3 position, Transform parent)
         {
-            var ray = new Ray(transform.position, transform.forward);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                InstantiateFire(hit.point);
-            }
-        }
-
-        private GameObject InstantiateFire(Vector3 position)
-        {
-            var partilce = Instantiate(_fireParticle);
-            partilce.transform.position = position;
-            partilce.transform.LookAt(transform);
-            Destroy(partilce, 0.1f);
-            return partilce;
+            var particle = Instantiate(_fireParticle);
+            particle.transform.position = position;
+            particle.transform.LookAt(transform);
+            particle.transform.parent = parent;
+            Destroy(particle, 0.1f);
         }
     }
 }
