@@ -15,13 +15,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
             public float BackwardSpeed = 4.0f;  // Speed when walking backwards
             public float StrafeSpeed = 4.0f;    // Speed when walking sideways
             public float RunMultiplier = 2.0f;   // Speed when sprinting
+            public float SquatMultiplier = 0.6f;   // Speed when squatting
 	        public KeyCode RunKey = KeyCode.LeftShift;
+            public KeyCode SquatKey = KeyCode.C;
+
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
             [HideInInspector] public float CurrentTargetSpeed = 8f;
 
 #if !MOBILE_INPUT
-            private bool m_Running;
+            private bool m_Running, m_Squatting;
 #endif
 
             public void UpdateDesiredTargetSpeed(Vector2 input)
@@ -43,6 +46,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					//handled last as if strafing and moving forward at the same time forwards speed should take precedence
 					CurrentTargetSpeed = ForwardSpeed;
 				}
+
+                if (Input.GetKey(SquatKey))
+                {
+                    CurrentTargetSpeed *= SquatMultiplier;
+                    m_Squatting = true;
+                }
+                else
+                {
+                    m_Squatting = false;
+                }
+
 #if !MOBILE_INPUT
 	            if (Input.GetKey(RunKey))
 	            {
@@ -62,6 +76,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 get { return m_Running; }
             }
 #endif
+            public bool Squatting
+            {
+                get { return m_Squatting; }
+            }
         }
 
 
@@ -115,6 +133,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 	            return false;
 #endif
             }
+        }
+
+        public bool Squatting
+        {
+            get { return movementSettings.Squatting; }
         }
 
 
